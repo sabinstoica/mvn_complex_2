@@ -1,5 +1,5 @@
 FROM maven
 WORKDIR /app
 RUN mkdir -p /app
-COPY ./my-app-1.0-SNAPSHOT.jar /app
+COPY app/target/my-app-war.jar /app
 CMD java -jar /app/my-app-1.0-SNAPSHOT.jar
