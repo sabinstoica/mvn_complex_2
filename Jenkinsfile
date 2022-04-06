@@ -16,8 +16,8 @@ pipeline {
                 script {
         
                     //sh "mvn deploy -f artifactory-maven-plugin-example/ -s artifactory-maven-plugin-example/settings.xml"
-                    // sh "mvn deploy -f app/ -Dusername=admin1 -Dpassword=password1 -D${env.BUILD_NUMBER}"
-                     sh "mvn -f app/ package deploy:deploy-file -DpomFile=app/pom.xml -Dfile=app/art-build-deploy.sh -Durl=http://172.30.69.154:8081/artifactory/maven_repo/"
+                     sh "mvn deploy -f app/ -Dusername=admin1 -Dpassword=password1 -D${env.BUILD_NUMBER}"
+                     // sh "mvn -f app/ package deploy:deploy-file -DpomFile=app/pom.xml -Dfile=app/art-build-deploy.sh -Durl=http://172.30.69.154:8081/artifactory/maven_repo/"
                 }
             }
         }
