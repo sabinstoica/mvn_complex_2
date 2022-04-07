@@ -54,7 +54,7 @@ pipeline {
                     sh "chmod +x ./cleanup.sh && ./cleanup.sh "
                 }
                 
-            }*/
+            }
 
             //post {
                 // Archive the war file 
@@ -63,7 +63,7 @@ pipeline {
             //        archiveArtifacts 'app/target/*.war'
             //    }
             //}
-        }
+        } */
         stage('Create Container') {
             agent {
                 label "slave_maven_build"
