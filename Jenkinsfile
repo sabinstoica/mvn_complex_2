@@ -12,11 +12,14 @@ pipeline {
         }
         
         stage('Maven build') {
+            agent {
+                label "slave_maven_build"
+            }
             steps {
                 script {
         
                     //sh "mvn deploy -f artifactory-maven-plugin-example/ -s artifactory-maven-plugin-example/settings.xml"
-                     sh "mvn deploy -f app/ -Dusername=admin1 -Dpassword=password1 -D${env.BUILD_NUMBER}"
+                     sh "mvn -f app/ package deploy -f app/ -Dusername=admin1 -Dpassword=password1 -D${env.BUILD_NUMBER}"
                      // sh "mvn -f app/ package deploy:deploy-file -DpomFile=app/pom.xml -Dfile=app/art-build-deploy.sh -Durl=http://172.30.69.154:8081/artifactory/maven_repo/"
                 }
             }
@@ -24,7 +27,10 @@ pipeline {
         
         
         
-        stage('Test') {
+        /*stage('Test') {
+            agent {
+                label "lin_node"
+            }
             steps {
                 script {
                     def mvnHome = tool 'Maven 3.6.3'
@@ -35,6 +41,9 @@ pipeline {
             
         }
         stage('Build') {
+            agent {
+                label "lin_node"
+            }
             steps {
                 script {
                     // Create package
@@ -45,7 +54,7 @@ pipeline {
                     sh "chmod +x ./cleanup.sh && ./cleanup.sh "
                 }
                 
-            }
+            }*/
 
             //post {
                 // Archive the war file 
@@ -56,15 +65,21 @@ pipeline {
             //}
         }
         stage('Create Container') {
+            agent {
+                label "slave_maven_build"
+            }
             steps {
                 // Build Image
                 sh "docker build -t $image_name ."
 
                 // Create container
-                sh "docker run -p 8089:8080 -d --name $container_name $image_name"
+               // sh "docker run -p 8089:8080 -d --name $container_name $image_name"
             }
         }
         stage('Deploy to Dockerhub'){
+            agent {
+                label "slave_maven_build"
+            }
             steps {
                 // Push to Dockerhub repo
                 withCredentials([usernamePassword(credentialsId: 'ae4a797f-6a03-4dc7-874f-c6683cc2fcba', passwordVariable: 'repo_passw', usernameVariable: 'repo_username')]) {
@@ -75,11 +90,31 @@ pipeline {
             }
         }
         stage('Clean image pushed to Dockerhub'){
+            agent {
+                label "slave_maven_deploy"
+            }
                     steps {
                         // Delete the image pushed to Dockehub
                         sh "docker rmi --force savaonu/$image_name"
                     }
                 }
+        stage('Deploy to App'){
+            agent {
+                label "slave_maven_deploy"
+            }
+            steps {
+                // Push to Dockerhub repo
+                withCredentials([usernamePassword(credentialsId: 'ae4a797f-6a03-4dc7-874f-c6683cc2fcba', passwordVariable: 'repo_passw', usernameVariable: 'repo_username')]) {
+                    sh "echo \"$repo_passw\" | docker login -u \"$repo_username\" --password-stdin"
+                   // sh "docker tag $image_name savaonu/$image_name"
+                    sh "docker pull savaonu/$image_name"
+                     // Create container
+                    sh "docker run -p 8089:8080 -d --name $container_name $image_name"
+                }
+            }
+        }
+
+
         stage('Send email') {
             steps {
                 emailext body: 'Build Successful',
