@@ -110,7 +110,7 @@ pipeline {
                    // sh "docker tag $image_name savaonu/$image_name"
                     sh "docker pull savaonu/$image_name"
                      // Create container
-                    sh "docker run -p 8089:8080 -d --name $container_name $image_name"
+                    sh "docker run -p 8089:8080 -d --name $container_name savaonu/$image_name"
                 }
             }
         }
