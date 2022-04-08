@@ -2,6 +2,16 @@ pipeline {
     agent {
             label "lin_node"
         }
+    environment {
+        DOCKER_HUB_CRED = credentials('docker_cred')
+    }
+    parameters {
+        string(name: 'image_name', defaultValue: 'maven_image', description: 'Name of the image')
+        string(name: 'container_name', defaultValue: 'my_maven_app', description: 'Name of the container')
+        string(name: 'sonar_token', defaultValue: 'aca9fee4aae893fa63b46476fb1938ddaac62ed9', description: 'The token from Sonarqube')
+        string(name: 'sonar_srv', defaultValue: 'http://172.30.67.117:9000', description: 'The Sonarqube server')
+
+    }
 
     stages {
         stage('Fetch Git') {
@@ -71,7 +81,8 @@ pipeline {
             }
             steps {
                 // Build Image
-                sh "docker build -t $image_name ."
+                sh "docker build -t ${params.image_name} ."
+                sh "mvn sonar:sonar -Dsonar.host.url=${params.sonar_srv} -Dsonar.login=${params.sonar_token}"
 
                 // Create container
                // sh "docker run -p 8089:8080 -d --name $container_name $image_name"
@@ -96,7 +107,7 @@ pipeline {
             }
                     steps {
                         // Delete the image pushed to Dockehub
-                        sh "docker rmi --force savaonu/$image_name"
+                        sh "docker rmi ${DOCKER_HUB_CRED_USR}/${params.image_name}"
                     }
                 }
         stage('Deploy to App'){
@@ -108,20 +119,35 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'ae4a797f-6a03-4dc7-874f-c6683cc2fcba', passwordVariable: 'repo_passw', usernameVariable: 'repo_username')]) {
                     sh "echo \"$repo_passw\" | docker login -u \"$repo_username\" --password-stdin"
                    // sh "docker tag $image_name savaonu/$image_name"
-                    sh "docker pull savaonu/$image_name"
+                    sh "docker pull ${DOCKER_HUB_CRED_USR}/${params.image_name}"
                      // Create container
-                    sh "docker run -p 8089:8080 -d --name $container_name savaonu/$image_name"
+                    sh "docker run -p 8089:8080 -d --name ${params.container_name} ${DOCKER_HUB_CRED_USR}/${params.image_name}"
                 }
             }
         }
 
-
-        stage('Send email') {
-            steps {
-                emailext body: 'Build Successful',
-                subject: 'Build Successful',
-                to: 'alexandru.sava@accesa.eu'
-            }
+        stage('Email'){
+                    //agent {
+                        // Run on windows node 
+                      //  label "lin_node"
+                    //}
+                    steps {
+                        // Info via email from windows node
+                        emailext body: "<b>Project build successful</b><br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", from: 'jenkins@test.com', mimeType: 'text/html', replyTo: '', subject: "SUCCESSFUL CI: Project name -> ${env.JOB_NAME}", to: "alexandru.sava@accesa.eu";
+                    }
         }
     }
+    post {
+         failure {
+                // Info via email about failed job
+             sendEmail("Failed");
+         }
+        unsuccessful {  
+              // Info via email about unsuccessful job 
+            sendEmail("Unsuccessful");
+        } 
+    }
 }
+def sendEmail(status) {
+    mail body: "<b>Project build </b>" + "<b>$status</b>"   + "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", charset: 'UTF-8', from: 'jenkins@test.com', mimeType: 'text/html', replyTo: '', subject: status + "  CI: Project name -> ${env.JOB_NAME}", to: "alexandru.sava@accesa.eu";
+} 
