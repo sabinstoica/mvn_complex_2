@@ -107,7 +107,9 @@ pipeline {
             }
                     steps {
                         // Delete the image pushed to Dockehub
-                        sh "docker rmi ${DOCKER_HUB_CRED_USR}/${params.image_name}"
+                        // Clean old images
+                        sh "chmod +x ./cleanup.sh && ./cleanup.sh "
+                        sh "docker rmi --force ${DOCKER_HUB_CRED_USR}/${params.image_name}"
                     }
                 }
         stage('Deploy to App'){
