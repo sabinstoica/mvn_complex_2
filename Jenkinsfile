@@ -82,7 +82,7 @@ pipeline {
             steps {
                 // Build Image
                 sh "docker build -t ${params.image_name} ."
-                sh "mvn -f /app sonar:sonar -Dsonar.host.url=${params.sonar_srv} -Dsonar.login=${params.sonar_token}"
+                sh "mvn -f app/ sonar:sonar -Dsonar.host.url=${params.sonar_srv} -Dsonar.login=${params.sonar_token}"
 
                 // Create container
                // sh "docker run -p 8089:8080 -d --name $container_name $image_name"
