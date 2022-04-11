@@ -9,7 +9,7 @@ pipeline {
         string(name: 'image_name', defaultValue: 'maven_image', description: 'Name of the image')
         string(name: 'container_name', defaultValue: 'my_maven_app', description: 'Name of the container')
         string(name: 'sonar_token', defaultValue: 'aca9fee4aae893fa63b46476fb1938ddaac62ed9', description: 'The token from Sonarqube')
-        string(name: 'sonar_srv', defaultValue: 'http://172.30.67.117:9000', description: 'The Sonarqube server')
+        string(name: 'sonar_srv', defaultValue: 'http://172.30.76.152:9000', description: 'The Sonarqube server')
 
     }
 
