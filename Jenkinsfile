@@ -30,7 +30,7 @@ pipeline {
         
                     //sh "mvn deploy -f artifactory-maven-plugin-example/ -s artifactory-maven-plugin-example/settings.xml"
                     def mvnHome = tool 'Maven 3.6.3'
-                    sh "'${mvnHome}/bin/mvn' -f app/ package deploy -f app/ -Dusername=admin1 -Dpassword=password1 -D${env.BUILD_NUMBER}"
+                    sh "'${mvnHome}/bin/mvn' -f app/ package deploy -f app/ -Dusername=admin -Dpassword=password -D${env.BUILD_NUMBER}"
                      // sh "mvn -f app/ package deploy:deploy-file -DpomFile=app/pom.xml -Dfile=app/art-build-deploy.sh -Durl=http://172.30.69.154:8081/artifactory/maven_repo/"
                 }
             }
