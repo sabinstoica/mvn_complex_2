@@ -66,12 +66,11 @@ pipeline {
         }
         stage('Clean image pushed to Artifactory'){
             agent {
-                label "slave_maven_deploy"
+                label "slave_maven_build"
             }
                     steps {
                         // Delete the image pushed to Dockehub
                         // Clean old images
-                        sh "chmod +x ./cleanup.sh && ./cleanup.sh "
                         sh "docker rmi --force docker-virtual.artifactory/${params.image_name}:${env.BUILD_NUMBER}"
                     }
                 }
@@ -80,7 +79,10 @@ pipeline {
                 label "slave_maven_deploy"
             }
             steps {
-                // Push to Dockerhub repo
+                // Clean old Container
+                sh "chmod +x ./cleanup.sh && ./cleanup.sh "
+
+                // Push to Artifactory docker registry
                 //withCredentials([usernamePassword(credentialsId: 'ae4a797f-6a03-4dc7-874f-c6683cc2fcba', passwordVariable: 'repo_passw', usernameVariable: 'repo_username')]) {
                     sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" docker-virtual.artifactory --password-stdin"
                    // sh "docker tag $image_name savaonu/$image_name"
