@@ -38,52 +38,14 @@ pipeline {
         }
         
         
-        
-        /*stage('Test') {
-            agent {
-                label "lin_node"
-            }
-            steps {
-                script {
-                    def mvnHome = tool 'Maven 3.6.3'
-                     sh "'${mvnHome}/bin/mvn' -f app/ test"
-                    //sh "/usr/share/maven/bin/mvn -f app/ test"
-                }
-           }
-            
-        }
-        stage('Build') {
-            agent {
-                label "lin_node"
-            }
-            steps {
-                script {
-                    // Create package
-                    def mvnHome = tool 'Maven 3.6.3'
-                    sh "'${mvnHome}/bin/mvn' -f app/ package"
-    
-                    // Clean old images
-                    sh "chmod +x ./cleanup.sh && ./cleanup.sh "
-                }
-                
-            }
-
-            //post {
-                // Archive the war file 
-            //    success {
-                    
-            //        archiveArtifacts 'app/target/*.war'
-            //    }
-            //}
-        } */
-        stage('Create Container') {
+        stage('Build Image') {
             agent {
                 label "slave_maven_build"
             }
             steps {
                 // Build Image
                 sh "docker build -t ${params.image_name} ."
-                sh "mvn -f app/ sonar:sonar -Dsonar.host.url=${params.sonar_srv} -Dsonar.login=${params.sonar_token}"
+               // sh "mvn -f app/ sonar:sonar -Dsonar.host.url=${params.sonar_srv} -Dsonar.login=${params.sonar_token}"
 
                 // Create container
                // sh "docker run -p 8089:8080 -d --name $container_name $image_name"
@@ -102,7 +64,7 @@ pipeline {
                 //}
             }
         }
-        stage('Clean image pushed to Dockerhub'){
+        stage('Clean image pushed to Artifactory'){
             agent {
                 label "slave_maven_deploy"
             }
