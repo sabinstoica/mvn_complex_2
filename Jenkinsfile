@@ -58,7 +58,7 @@ pipeline {
             steps {
                 // Push to Dockerhub repo
                // withCredentials([usernamePassword(credentialsId: 'Artifactory_admin', passwordVariable: 'repo_passw', usernameVariable: 'repo_username')]) {
-                    sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" --password-stdin"
+                    sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" docker-virtual.artifactory --password-stdin"
                     sh "docker tag ${params.image_name} docker-virtual.artifactory/${params.image_name}"
                     sh "docker push docker-virtual.artifactory/${params.image_name}"
                 //}
@@ -82,7 +82,7 @@ pipeline {
             steps {
                 // Push to Dockerhub repo
                 //withCredentials([usernamePassword(credentialsId: 'ae4a797f-6a03-4dc7-874f-c6683cc2fcba', passwordVariable: 'repo_passw', usernameVariable: 'repo_username')]) {
-                    sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" --password-stdin"
+                    sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" docker-virtual.artifactory --password-stdin"
                    // sh "docker tag $image_name savaonu/$image_name"
                     sh "docker pull docker-virtual.artifactory/${params.image_name}"
                      // Create container
