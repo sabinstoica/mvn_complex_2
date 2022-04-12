@@ -44,7 +44,7 @@ pipeline {
             }
             steps {
                 // Build Image
-                sh "docker build -t ${params.image_name} ."
+                sh "docker build -t ${params.image_name}:${env.BUILD_NUMBER} ."
                //sh "mvn -f app/ sonar:sonar -Dsonar.host.url=${params.sonar_srv} -Dsonar.login=${params.sonar_token}"
 
                 // Create container
@@ -59,8 +59,8 @@ pipeline {
                 // Push to Dockerhub repo
                // withCredentials([usernamePassword(credentialsId: 'Artifactory_admin', passwordVariable: 'repo_passw', usernameVariable: 'repo_username')]) {
                     sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" docker-virtual.artifactory --password-stdin"
-                    sh "docker tag ${params.image_name} docker-virtual.artifactory/${params.image_name}"
-                    sh "docker push docker-virtual.artifactory/${params.image_name}"
+                    sh "docker tag ${params.image_name}:${env.BUILD_NUMBER} docker-virtual.artifactory/${params.image_name}:${env.BUILD_NUMBER}"
+                    sh "docker push docker-virtual.artifactory/${params.image_name}:${env.BUILD_NUMBER}"
                 //}
             }
         }
@@ -72,7 +72,7 @@ pipeline {
                         // Delete the image pushed to Dockehub
                         // Clean old images
                         sh "chmod +x ./cleanup.sh && ./cleanup.sh "
-                        sh "docker rmi --force docker-virtual.artifactory/${params.image_name}"
+                        sh "docker rmi --force docker-virtual.artifactory/${params.image_name}:${env.BUILD_NUMBER}"
                     }
                 }
         stage('Deploy to App'){
@@ -84,9 +84,9 @@ pipeline {
                 //withCredentials([usernamePassword(credentialsId: 'ae4a797f-6a03-4dc7-874f-c6683cc2fcba', passwordVariable: 'repo_passw', usernameVariable: 'repo_username')]) {
                     sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" docker-virtual.artifactory --password-stdin"
                    // sh "docker tag $image_name savaonu/$image_name"
-                    sh "docker pull docker-virtual.artifactory/${params.image_name}"
+                    sh "docker pull docker-virtual.artifactory/${params.image_name}:${env.BUILD_NUMBER}"
                      // Create container
-                    sh "docker run -p 8089:8080 -d --name ${params.container_name} docker-virtual.artifactory/${params.image_name}"
+                    sh "docker run -p 8089:8080 -d --name ${params.container_name} docker-virtual.artifactory/${params.image_name}:${env.BUILD_NUMBER}"
                 //}
             }
         }
