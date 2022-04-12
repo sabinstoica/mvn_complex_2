@@ -51,6 +51,18 @@ pipeline {
                // sh "docker run -p 8089:8080 -d --name $container_name $image_name"
             }
         }
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh "mvn -f app/ sonar:sonar -Dsonar.host.url=${params.sonar_srv} -Dsonar.login=${params.sonar_token}"
+                }
+            }
+        }
+        stage("Quality gate") {
+            steps {
+                waitForQualityGate abortPipeline: true
+            }
+        }
         stage('Deploy to Artifactory'){
             agent {
                 label "slave_maven_build"
