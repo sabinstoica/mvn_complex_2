@@ -123,6 +123,15 @@ pipeline {
             sendEmail("Unsuccessful");
         } 
     }
+    options {
+        // For example, we'd like to make sure we only keep 10 builds at a time, so
+        // we don't fill up our storage!
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+
+        // And we'd really like to be sure that this build doesn't hang forever, so
+        // let's time it out after an hour.
+        timeout(time: 5, unit: 'MINUTES')
+    }
 }
 def sendEmail(status) {
     mail body: "<b>Project build </b>" + "<b>$status</b>"   + "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", charset: 'UTF-8', from: 'jenkins@test.com', mimeType: 'text/html', replyTo: '', subject: status + "  CI: Project name -> ${env.JOB_NAME}", to: "alexandru.sava@accesa.eu";
