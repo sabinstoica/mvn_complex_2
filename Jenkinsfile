@@ -32,7 +32,6 @@ pipeline {
                     //sh "mvn deploy -f artifactory-maven-plugin-example/ -s artifactory-maven-plugin-example/settings.xml"
                     def mvnHome = tool 'Maven 3.6.3'
                     //sh "'${mvnHome}/bin/mvn' -f app/ package deploy -f app/ -Dusername=admin -Dpassword=Password.123 -D${env.BUILD_NUMBER}"
-                     // sh "mvn -f app/ package deploy:deploy-file -DpomFile=app/pom.xml -Dfile=app/art-build-deploy.sh -Durl=http://172.30.69.154:8081/artifactory/maven_repo/"
                 }
             }
         }
@@ -44,22 +43,20 @@ pipeline {
             }
             steps {
                 // Build Image
-                sh "docker build -t ${params.image_name}:${env.BUILD_NUMBER} ."
-               //sh "mvn -f app/ sonar:sonar -Dsonar.host.url=${params.sonar_srv} -Dsonar.login=${params.sonar_token}"
-
-                // Create container
-               // sh "docker run -p 8089:8080 -d --name $container_name $image_name"
+                sh "docker build -t ${params.image_name}:${env.BUILD_NUMBER} . --label "type=maven_image""
             }
         }
         stage('SonarQube analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
+                    // Sonarqube check
                     sh "mvn -f app/ sonar:sonar -Dsonar.host.url=${params.sonar_srv} -Dsonar.login=${params.sonar_token}"
                 }
             }
         }
         stage("Quality gate") {
             steps {
+                // Check if the analysis is good 
                 waitForQualityGate abortPipeline: true
             }
         }
@@ -76,14 +73,14 @@ pipeline {
                 //}
             }
         }
-        stage('Clean image pushed to Artifactory'){
+        stage('Clean images'){
             agent {
                 label "slave_maven_build"
             }
                     steps {
-                        // Delete the image pushed to Dockehub
-                        // Clean old images
+                        // Delete the image pushed to Artifactory
                         sh "docker rmi --force docker-virtual.artifactory/${params.image_name}:${env.BUILD_NUMBER}"
+                        sh "docker rmi --force ${params.image_name}:${env.BUILD_NUMBER}"
                     }
                 }
         stage('Deploy to App'){
