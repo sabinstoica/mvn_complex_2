@@ -43,7 +43,7 @@ pipeline {
             }
             steps {
                 // Build Image
-                sh "docker build -t ${params.image_name}:${env.BUILD_NUMBER} . --label "type=maven_image""
+                sh "docker build -t ${params.image_name}:${env.BUILD_NUMBER} . --label \"type=maven_image\""
             }
         }
         stage('SonarQube analysis') {
