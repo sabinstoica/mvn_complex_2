@@ -16,8 +16,8 @@ stages {
                  }
             stage('SonarQube analysis') {
                 steps {
-                withSonarQubeEnv('sonar2')  
-                sh "mvn -f app/ sonar:sonar" 
+                    withSonarQubeEnv('sonar2')  {
+                        sh "mvn -f app/ sonar:sonar" }
                                             }
                 }
             stage("Quality gate") {
