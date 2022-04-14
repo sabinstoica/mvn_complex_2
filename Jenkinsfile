@@ -17,7 +17,9 @@ stages {
             stage('SonarQube analysis') {
                 steps {
                 withSonarQubeEnv('sonar2') { 
-                sh "mvn -f app/ sonar:sonar"
+                sh "mvn -f app/ sonar:sonar" 
+                                            }
+                }
             stage("Quality gate") {
                 steps {
                     waitForQualityGate abortPipeline: true
@@ -27,5 +29,4 @@ stages {
                       }
              }
       }
-   }
-}
+  
