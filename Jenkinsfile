@@ -5,7 +5,7 @@ stages {
             stage ('Get code from GIT') {
                 steps {
                     // Get the repo from GitHub
-                    git 'https://github.com/sabinstoica/mvn_complex.git'
+                    git 'https://github.com/sabinstoica/mvn_complex_2.git'
                        }
             }
             stage('build') {
