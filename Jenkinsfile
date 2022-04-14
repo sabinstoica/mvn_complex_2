@@ -18,6 +18,11 @@ stages {
                 steps {
                 withSonarQubeEnv('sonar2') { 
                 sh "mvn -f app/ sonar:sonar"
+            stage("Quality gate") {
+                steps {
+                    waitForQualityGate abortPipeline: true
+                
+            }
                                  }
                       }
              }
