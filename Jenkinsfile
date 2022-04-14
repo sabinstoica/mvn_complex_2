@@ -11,6 +11,7 @@ stages {
             stage('build') {
                  steps {
                      // build the package)
+                     sh 'mvn -version' 
                      sh 'mvn -f app/ clean package '
                        }
                  }
