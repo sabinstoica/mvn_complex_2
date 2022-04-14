@@ -16,7 +16,7 @@ stages {
                  }
             stage('SonarQube analysis') {
                 steps {
-                withSonarQubeEnv('sonar2') { 
+                withSonarQubeEnv('sonar2')  
                 sh "mvn -f app/ sonar:sonar" 
                                             }
                 }
