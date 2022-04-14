@@ -11,6 +11,7 @@ stages {
             stage('build') {
                  steps {
                      // build the package)
+                     sh 'uname -a'
                      sh 'mvn -version' 
                      sh 'mvn -f app/ clean package '
                        }
@@ -18,7 +19,8 @@ stages {
             stage('SonarQube analysis') {
                 steps {
       withSonarQubeEnv('sonar2') {
-        sh 'mvn -version'  
+        sh 'uname -a'
+          sh 'mvn -version'  
         sh 'mvn -f app/ sonar:sonar'
                                  }
                       }
