@@ -5,11 +5,11 @@ stages { //start stages
             stage ('Get code from GIT') { // start stage 'Get code from GIT'
                 steps { //start step 'Get the repo from GitHub'
                     git 'https://github.com/sabinstoica/mvn_complex_2.git'
-                       } // stop
-            }
-            stage('build') {
+                       } // stop step 'Get the repo from GitHub'
+            } // stop stage 'stage 'Get code from GIT'
+            stage('build') { //start stage 'build the package'
                  steps {
-                     // build the package)
+                     
                       sh "mvn -f app/ clean package"
                        }
                  }
