@@ -11,7 +11,7 @@ stages {
             stage('build') {
                  steps {
                      // build the package)
-                     sh 'mvn clean package'
+                     sh 'mvn -f app/ clean package '
                        }
                  }
             stage('SonarQube analysis') {
