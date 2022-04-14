@@ -11,14 +11,13 @@ stages {
             stage('build') {
                  steps {
                      // build the package)
-                      sh "'${mvnHome}/bin/mvn' -f app/ clean package"
+                      sh "mvn -f app/ clean package"
                        }
                  }
             stage('SonarQube analysis') {
                 steps {
                 withSonarQubeEnv('sonar2') { 
-                sh "'${mvnHome}/bin/mvn' -f app/ sonar:sonar"
-                    
+                sh "mvn -f app/ sonar:sonar"
                                  }
                       }
              }
