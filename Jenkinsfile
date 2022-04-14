@@ -1,12 +1,11 @@
-pipeline {
+pipeline { //start pipeline
     agent {label 'builder'}
     tools {maven "Maven3"}
-stages {
-            stage ('Get code from GIT') {
-                steps {
-                    // Get the repo from GitHub
+stages { //start stages
+            stage ('Get code from GIT') { // start stage 'Get code from GIT'
+                steps { //start step 'Get the repo from GitHub'
                     git 'https://github.com/sabinstoica/mvn_complex_2.git'
-                       }
+                       } // stop
             }
             stage('build') {
                  steps {
@@ -25,5 +24,5 @@ stages {
                     waitForQualityGate abortPipeline: true
             }
                                  }
-                      }
-             }
+         } // stop stages
+} // stop pipeline
