@@ -11,18 +11,18 @@ stages {
             stage('build') {
                  steps {
                      // build the package)
-                      sh 'uname -a'
-                      sh 'mvn -version
                       def mvnHome = tool 'Maven3'
+                      sh 'uname -a'
+                      sh 'mvn -version'
                       sh "'${mvnHome}/bin/mvn' -f app/ clean package"
                        }
                  }
             stage('SonarQube analysis') {
                 steps {
-      withSonarQubeEnv('sonar2') {
-        sh 'uname -a'
-        sh 'mvn -version' 
+      withSonarQubeEnv('sonar2') { 
         def mvnHome = tool 'Maven3'
+        sh 'uname -a'
+        sh 'mvn -version'
         sh "'${mvnHome}/bin/mvn' -f app/ sonar:sonar"
                                  }
                       }
