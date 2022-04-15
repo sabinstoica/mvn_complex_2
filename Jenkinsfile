@@ -1,6 +1,9 @@
 pipeline { //start pipeline
     agent {label 'builder'}
     tools {maven "Maven3"}
+    environment {
+        ARTIFACTORY_CRED = credentials('vagrant')
+    }
 stages { //start stages
             stage ('Get code from GIT') { 
                 steps { 
@@ -14,14 +17,17 @@ stages { //start stages
                  }
             stage('SonarQube analysis') { 
                 steps { 
-                    withSonarQubeEnv('sonar2')  {
+                        withSonarQubeEnv('sonar2')  {
                         sh "mvn -f app/ sonar:sonar" }
                                             }
                 }
             stage("Quality gate") {
                 steps {
-                    waitForQualityGate abortPipeline: true
+                        waitForQualityGate abortPipeline: true
             } // stop steps Quality gate 
                                  } //stop stage Quality gate
+            stage ("Deploy package to artifactory") {
+                steps {
+                        sh "mvn deploy -f app/ -Dusername=${ARTIFACTORY_CRED_USR} -Dpassword=${ARTIFACTORY_CRED_PSW} -D${env.BUILD_NUMBER}"
          } // stop stages
 } // stop pipeline
