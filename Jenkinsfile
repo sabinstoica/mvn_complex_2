@@ -8,7 +8,7 @@ stages { //start stages
                     git 'https://github.com/sabinstoica/mvn_complex_2.git'
                        } 
             }
-            stage('build') { 
+            stage('Build package') { 
                  steps { 
                       sh "mvn -f app/ clean package"
                        } // stop steps build 
