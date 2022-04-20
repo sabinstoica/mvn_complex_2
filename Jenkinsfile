@@ -29,5 +29,11 @@ stages { //start stages
                         sh "mvn deploy -f app/ -Dusername=${ARTIFACTORY_CRED_USR} -Dpassword=${ARTIFACTORY_CRED_PSW} -D${env.BUILD_NUMBER}"
                       }
                 } //stop stage Deploy
+            stage('Build Image') {
+            steps {
+                // Build Image
+                sh "docker build -t docker.artifactory.local:8083 . --label \"type=maven_image\""
+            }
+        } //stop stage Build Image
          } // stop stages
 } // stop pipeline
