@@ -32,7 +32,7 @@ stages { //start stages
             stage('Build Image') {
             steps {
                 // Build Image
-                sh "docker build -t docker.artifactory.local:8083 . --label \"type=maven_image\""
+                sh "docker build -t docker.artifactory.local:8083 ."
             }
         } //stop stage Build Image
          } // stop stages
