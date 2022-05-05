@@ -1,5 +1,5 @@
 pipeline { //start pipeline
-    agent {label 'builder'}
+//agent {label 'builder'}
     tools {maven "Maven3"}
     environment {ARTIFACTORY_CRED = credentials('vagrant user')}
 stages { //start stages
