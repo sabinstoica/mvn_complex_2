@@ -36,22 +36,22 @@ stages { //start stages
             stage('Build Image') {
             steps {
                 // Build Image
-                sh "docker build -t docker.artifactory.local/${params.image_name}:${env.BUILD_NUMBER} . --label \"type=maven_image\""
+                sh "docker build -t docker.artifactory.local/$image:${env.BUILD_NUMBER} . --label \"type=maven_image\""
             }
         } //stop stage Build Image
             stage('Deploy Image to Artifactory'){
             steps {
                         sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" docker.artifactory.local --password-stdin"
-                        sh "docker push docker.artifactory.local/${params.image_name}:${env.BUILD_NUMBER}"
+                        sh "docker push docker.artifactory.local/$image:${env.BUILD_NUMBER}"
                   }
             }   
             stage('Pull/Deploy App'){
             steps {
                 // Pull docker image from docker registry
                         sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" docker.artifactory.local --password-stdin"
-                        sh "docker pull docker.artifactory.local/${params.image_name}:${params.tag}"
+                        sh "docker pull docker.artifactory.local/$image:${params.tag}"
                 // Docker run
-                        sh "docker run -p 8089:8080 -d --name ${params.container_name} docker.artifactory.local/${params.image_name}:${params.tag}"
+                        sh "docker run -p 8089:8080 -d --name $container docker.artifactory.local/$image:${params.tag}"
                     }
             } // stop 'Pull/Deploy App' stage
          } // stop stages
