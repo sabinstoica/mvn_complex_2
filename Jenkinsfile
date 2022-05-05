@@ -37,6 +37,7 @@ stages { //start stages
             steps {
                 // Build Image
                 sh "docker build -t docker.artifactory.local/$image:${env.BUILD_NUMBER} . --label \"type=maven_image\""
+                //sh "docker build -t docker.artifactory.local/$image:${env.BUILD_NUMBER} . --label \"type=maven_image\""
             }
         } //stop stage Build Image
             stage('Deploy Image to Artifactory'){
