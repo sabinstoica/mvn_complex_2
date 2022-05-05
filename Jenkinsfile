@@ -2,10 +2,6 @@ pipeline { //start pipeline
     agent {label 'builder'}
     tools {maven "Maven3"}
     environment {ARTIFACTORY_CRED = credentials('vagrant user')}
-    parameters {
-        string(name: 'image_name', defaultValue: 'maven_image', description: 'Docker Image')
-        string(name: 'container_name', defaultValue: 'maven_app', description: 'Container Name')
-    }
 stages { //start stages
             stage ('Get code from GIT') { 
                 steps { 
