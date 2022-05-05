@@ -30,7 +30,7 @@ stages { //start stages
                                  } //stop stage Quality gate
             stage ("Deploy package to artifactory") {
                 steps {
-                        sh "mvn deploy -f app/ -Dusername=${ARTIFACTORY_CRED_USR} -Dpassword=${ARTIFACTORY_CRED_PSW} -D${env.BUILD_NUMBER}"
+                        sh "mvn deploy -f app/ -Dusername=${ARTIFACTORY_CRED_USR} -Dpassword=${ARTIFACTORY_CRED_PSW} -DbuildNumber=${env.BUILD_NUMBER}"
                       }
                 } //stop stage Deploy
             stage('Build Image') {
