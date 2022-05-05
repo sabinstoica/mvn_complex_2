@@ -21,7 +21,7 @@ stages { //start stages
                 steps { 
                         withSonarQubeEnv('sonar2')  {
                         sh "mvn -f app/ sonar:sonar" }
-                                            }
+                                           }
                 }
             stage("Quality gate") {
                 steps {
@@ -53,5 +53,6 @@ stages { //start stages
                 // Docker run
                         sh "docker run -p 8089:8080 -d --name ${params.container_name} docker.artifactory.local/${params.image_name}:${params.tag}"
                     }
+            } // stop 'Pull/Deploy App' stage
          } // stop stages
 } // stop pipeline
