@@ -2,6 +2,10 @@ pipeline { //start pipeline
     agent {label 'builder'}
     tools {maven "Maven3"}
     environment {ARTIFACTORY_CRED = credentials('vagrant user')}
+    parameters {
+        string(name: 'image_name', defaultValue: 'maven_image', description: 'Docker Image')
+        string(name: 'container_name', defaultValue: 'maven_app', description: 'Container Name')
+    }
 stages { //start stages
             stage ('Get code from GIT') { 
                 steps { 
@@ -32,8 +36,22 @@ stages { //start stages
             stage('Build Image') {
             steps {
                 // Build Image
-                sh "docker build -t docker.artifactory.local:8083 ."
+                sh "docker build -t docker.artifactory.local/${params.image_name}:${env.BUILD_NUMBER} . --label \"type=maven_image\""
             }
         } //stop stage Build Image
+            stage('Deploy Image to Artifactory'){
+            steps {
+                        sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" docker.artifactory.local --password-stdin"
+                        sh "docker push docker.artifactory.local/${params.image_name}:${env.BUILD_NUMBER}"
+                  }
+            }   
+            stage('Pull/Deploy App'){
+            steps {
+                // Pull docker image from docker registry
+                        sh "echo \"${ARTIFACTORY_CRED_PSW}\" | docker login -u \"${ARTIFACTORY_CRED_USR}\" docker.artifactory.local --password-stdin"
+                        sh "docker pull docker.artifactory.local/${params.image_name}:${params.tag}"
+                // Docker run
+                        sh "docker run -p 8089:8080 -d --name ${params.container_name} docker.artifactory.local/${params.image_name}:${params.tag}"
+                    }
          } // stop stages
 } // stop pipeline
